@@ -1,22 +1,38 @@
-version: '3.1'
+version: '3'
 
 services:
-  php:
-    build: ./php
+  # Придумываем название сврвиса
+  django:
+    # Будем вытягивать все настройки из Dockerfile, указываем путь к нему
+    build: .
+    # Название контейнера
+    container_name: djangoc
+    # При построении сервиса выполнить команду (запустить локальный сервер)
+    # указываем любой порт
+    command: python manage.py runserver 0.0.0.0:8000
+    # Текущая директория проекта пробрасывается в директорию /usr/src/app контейнера
+    volumes:
+      - .:/usr/src/app
+    # Прокидываем порты "локальный порт:порт контейнера
     ports:
-      - 8081:80
+      - "8000:8000"
+    # Связываем сервис django с сервисом pgdb,
+    # Сервис будет запущен, только после старта pgdb
+    depends_on:
+      - pgdb
 
-  db:
-    image: mysql
-    restart: always
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_ROOT_PASSWORD: 12345
+  # Название для сервисо Postgresql
+  pgdb:
+    image: postgres  # Оброз
+    environment:     # Переменные для подключению к базе данных
+      - POSTGRES_DB=postgres         # Придумываем название для бд
+      - POSTGRES_USER=postgres       # Логин
+      - POSTGRES_PASSWORD=postgres   # Пароль
+    container_name: pgdb
+    # Пробрасываем папку с данными проекта (любую) со стандартной попкой на сервере
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
 
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
-    ports:
-      - 8080:80
-    environment:
-      - PMA_ARBITRARY=1
+# Создаём папку pgdbdata
+volumes:
+  pgdbdata: null

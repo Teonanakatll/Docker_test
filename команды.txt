@@ -1,0 +1,11 @@
+# Cоздание дж-проекта. . - место где создаём джанго-проект
+# docker-compose run django django-admin startproject djaga .
+
+# Запуск джанго-проекто
+# docker-compose up
+
+# Ммграция через docker
+# docker-compose run django python manage.py migratej
+
+# Создание суперюзера через docker
+# docher-compose run django python manage.py createsuperuser
